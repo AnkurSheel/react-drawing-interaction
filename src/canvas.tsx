@@ -54,6 +54,23 @@ const Canvas = ({ width, height }: CanvasProps) => {
         };
     }, [paint]);
 
+    const exitPaint = useCallback(() => {
+        setIsPainting(false);
+    }, []);
+
+    useEffect(() => {
+        if (!canvasRef.current) {
+            return;
+        }
+        const canvas: HTMLCanvasElement = canvasRef.current;
+        canvas.addEventListener('mouseup', exitPaint);
+        canvas.addEventListener('mouseleave', exitPaint);
+        return () => {
+            canvas.removeEventListener('mouseup', exitPaint);
+            canvas.removeEventListener('mouseleave', exitPaint);
+        };
+    }, [exitPaint]);
+
     const getCoordinates = (event: MouseEvent) => {
         if (!canvasRef.current) {
             return;
