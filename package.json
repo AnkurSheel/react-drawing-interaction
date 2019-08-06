@@ -1,0 +1,38 @@
+{
+    "name": "react-drawing-interaction",
+    "version": "1.0.0",
+    "description": "",
+    "keywords": [],
+    "main": "src/index.tsx",
+    "dependencies": {
+        "react": "16.8.6",
+        "react-dom": "16.8.6",
+        "react-scripts": "3.0.1"
+    },
+    "devDependencies": {
+        "@types/react": "16.8.24",
+        "@types/react-dom": "^16.8.5",
+        "@typescript-eslint/eslint-plugin": "^1.13.0",
+        "@typescript-eslint/parser": "^1.13.0",
+        "eslint-config-prettier": "^6.0.0",
+        "eslint-plugin-prettier": "^3.1.0",
+        "eslint-plugin-react": "^7.14.3",
+        "eslint-plugin-react-hooks": "^1.6.1",
+        "prettier": "^1.18.2",
+        "typescript": "^3.5.3"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test --env=jsdom",
+        "eject": "react-scripts eject",
+        "lint": "eslint . --ext ts --ext tsx --ext js --ext jsx",
+        "lint:fix": "yarn lint --fix"
+    },
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not ie <= 11",
+        "not op_mini all"
+    ]
+}
