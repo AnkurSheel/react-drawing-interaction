@@ -5,18 +5,21 @@ interface CanvasProps {
     height: number;
 }
 
+type Coordinate = {
+    x: number;
+    y: number;
+};
+
 const Canvas = ({ width, height }: CanvasProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isPainting, setIsPainting] = useState(false);
-    const [x, setX] = useState(0);
-    const [y, setY] = useState(0);
+    const [mousePosition, setMousePosition] = useState<Coordinate | undefined>(undefined);
 
     const startPaint = useCallback((event: MouseEvent) => {
         const coordinates = getCoordinates(event);
         if (coordinates) {
+            setMousePosition(coordinates);
             setIsPainting(true);
-            setX(coordinates[0]);
-            setY(coordinates[1]);
         }
     }, []);
 
@@ -34,13 +37,14 @@ const Canvas = ({ width, height }: CanvasProps) => {
     const paint = useCallback(
         (event: MouseEvent) => {
             if (isPainting) {
-                let [newX, newY] = getCoordinates(event) || [0, 0];
-                drawLine(x, y, newX, newY);
-                setX(newX);
-                setY(newY);
+                const newMousePosition = getCoordinates(event);
+                if (mousePosition && newMousePosition) {
+                    drawLine(mousePosition, newMousePosition);
+                    setMousePosition(newMousePosition);
+                }
             }
         },
-        [isPainting, x, y]
+        [isPainting, mousePosition]
     );
 
     useEffect(() => {
@@ -56,6 +60,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
 
     const exitPaint = useCallback(() => {
         setIsPainting(false);
+        setMousePosition(undefined);
     }, []);
 
     useEffect(() => {
@@ -71,18 +76,16 @@ const Canvas = ({ width, height }: CanvasProps) => {
         };
     }, [exitPaint]);
 
-    const getCoordinates = (event: MouseEvent) => {
+    const getCoordinates = (event: MouseEvent): Coordinate | undefined => {
         if (!canvasRef.current) {
             return;
         }
 
-        if (['mousedown', 'mousemove'].includes(event.type)) {
-            const canvas: HTMLCanvasElement = canvasRef.current;
-            return [event.pageX - canvas.offsetLeft, event.pageY - canvas.offsetTop];
-        }
+        const canvas: HTMLCanvasElement = canvasRef.current;
+        return { x: event.pageX - canvas.offsetLeft, y: event.pageY - canvas.offsetTop };
     };
 
-    const drawLine = (firstX: number, firstY: number, secondX: number, secondY: number) => {
+    const drawLine = (originalMousePosition: Coordinate, newMousePosition: Coordinate) => {
         if (!canvasRef.current) {
             return;
         }
@@ -94,8 +97,8 @@ const Canvas = ({ width, height }: CanvasProps) => {
             context.lineWidth = 5;
 
             context.beginPath();
-            context.moveTo(secondX, secondY);
-            context.lineTo(firstX, firstY);
+            context.moveTo(originalMousePosition.x, originalMousePosition.y);
+            context.lineTo(newMousePosition.x, newMousePosition.y);
             context.closePath();
 
             context.stroke();
